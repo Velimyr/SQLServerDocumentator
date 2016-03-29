@@ -88,7 +88,8 @@ namespace SQL_Docs_Generator
             string Name_pattern = "(?<=CREATE PROCEDURE )(.*)";
             string Author_pattern = "(?<=-- Author:)(.*)";
             string Created_pattern = "(?<=-- Create date:)(.*)";
-            string Desc_pattern = "(?<=-- Description:)(.*)";           
+            string Desc_pattern = "(?<=-- Description:)(.*)";
+            string Section_pattern = "(?<=-- Section:)(.*)";
             string returned_pattern = "statuses:(?s)(.*)(?=/*/)";
 
             NewSP.name = name;
@@ -97,7 +98,8 @@ namespace SQL_Docs_Generator
             NewSP.creationdate = Regex.Match(SP_Text, Created_pattern).ToString().Trim();
             NewSP.desc = Regex.Match(SP_Text, Desc_pattern).ToString().Trim();
             NewSP.returned = Regex.Match(SP_Text, returned_pattern).ToString().Trim();
-           
+            NewSP.section = Regex.Match(SP_Text, Section_pattern).ToString().Trim();
+
             NewSP.parameters = SPGetParams(NewSP.name, SP_Text);
 
             con.Close();
@@ -142,6 +144,8 @@ namespace SQL_Docs_Generator
         {
             try
             {
+                SPData.Sort( delegate (SPClass c1, SPClass c2) { return c1.section.CompareTo(c2.section); });
+
                 // Create a Document object
                 Document document = new Document(PageSize.A4, 50, 50, 25, 25);
 
@@ -157,19 +161,28 @@ namespace SQL_Docs_Generator
 
                 //Fonts registration
                 BaseFont baseFont = BaseFont.CreateFont(Server.MapPath("~/Content/Arial.ttf"), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                Font mainTextFont = new Font(baseFont, 12);
-                Font SubHeaderTextFont = new Font(baseFont, 12, 1);
-                Font MinTextFont = new Font(baseFont, 10, 2);
-                Font HeaderTextFont = new Font(baseFont, 18, 1);
+                Font mainTextFont = new Font(baseFont, 10);
+                Font SubHeaderTextFont = new Font(baseFont, 10, 1);
+                Font MinTextFont = new Font(baseFont, 9, 2);
+                Font HeaderTextFont = new Font(baseFont, 14, 1);
+                Font SectionHeaderTextFont = new Font(baseFont, 18, 1);
 
                 // Open the Document for writing
                 document.Open();
 
+                string Section_Name = "";
                 foreach (SPClass item in SPData)
                 {
+                    if (Section_Name != item.section)
+                    {
+                        document.NewPage();
+                        Paragraph SectionParagraph = new Paragraph("Section: " + item.section, SectionHeaderTextFont);
+                        document.Add(SectionParagraph);
+                        Section_Name = item.section;
+                    }
                     //Назва процедури 
                     document.Add(new Chunk("\n")); //Відступ  
-                    document.Add(new Chunk("\n")); //Відступ              
+                    
                     Paragraph NameParagraph = new Paragraph("[" + item.schema + "].[" + item.name + "]", HeaderTextFont);
                     document.Add(NameParagraph);
                     //Опис процедури

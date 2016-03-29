@@ -12,6 +12,7 @@ namespace SQL_Docs_Generator
         public string author { get; set; }
         public string creationdate { get; set; }
         public string desc { get; set; }
+        public string section { get; set; }
         public List<string> parameters {get; set;}
         public string returned { get; set; }
     }
