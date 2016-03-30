@@ -90,7 +90,7 @@ namespace SQL_Docs_Generator
             string Created_pattern = "(?<=-- Create date:)(.*)";
             string Desc_pattern = "(?<=-- Description:)(.*)";
             string Section_pattern = "(?<=-- Section:)(.*)";
-            string returned_pattern = "statuses:(?s)(.*)(?=/*/)";
+            string returned_pattern = "statuses(?s)(.*)(?=/*/)";
 
             NewSP.name = name;
             NewSP.schema = schema;
