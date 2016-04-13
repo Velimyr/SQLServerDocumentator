@@ -150,7 +150,7 @@ namespace SQL_Docs_Generator
                 Document document = new Document(PageSize.A4, 50, 50, 25, 25);
 
                 // Create a new PdfWriter object, specifying the output stream
-                FileStream output = new FileStream(Server.MapPath("SQLDoc.pdf"), FileMode.Create);
+                FileStream output = new FileStream(Server.MapPath("SQLDoc_"+ drpDatabase.SelectedItem.Text.ToString() + ".pdf"), FileMode.Create);
                 PdfWriter writer = PdfWriter.GetInstance(document, output);
 
                 //Adding metainfo
@@ -243,8 +243,8 @@ namespace SQL_Docs_Generator
 
                 // Write the file to the Response
                 Response.ContentType = "Application/pdf";
-                Response.AppendHeader("Content-Disposition", "attachment; filename=SQLDoc.pdf");
-                Response.TransmitFile(Server.MapPath("SQLDoc.pdf"));
+                Response.AppendHeader("Content-Disposition", "attachment; filename=SQLDoc_" + drpDatabase.SelectedItem.Text.ToString() + ".pdf");
+                Response.TransmitFile(Server.MapPath("SQLDoc_" + drpDatabase.SelectedItem.Text.ToString() + ".pdf"));
                 Response.End();
             }
             catch (Exception err)
